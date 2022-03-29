@@ -1,8 +1,5 @@
 # Template
 
 class Simulation:
-    def __init__(time, size):
-        
-
-
-    
+    def __init__(duration):
+        self.duration = duration

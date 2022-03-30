@@ -1,9 +1,13 @@
 # Template
+import matplotlib import pyplot as plt
+
+
+
 
 class Simulation:
 
-    def __init__(duration):
-        
+    def __init__(self, duration):
+
         self.duration = duration
         self.day = 0
 
@@ -12,4 +16,5 @@ class Simulation:
         self.infection_probability = 0.1
         self.death_probability = 0.05
 
-    
+
+

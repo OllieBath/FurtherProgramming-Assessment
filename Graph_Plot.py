@@ -31,8 +31,32 @@ cumDeaths=slicef["Cum Deaths"]
 newdeaths=slicef["New deaths"]
 vaccinated=slicef["vaccinated"]
 
-# print(vaccinated)
 def dplot(x,y1,y2,x_label,y1_label,y2_label,title):
+    """
+    Function that creates plots of 2 line graphs sharing same x axis but different y axis due to different ranges of values 
+
+    Parameters
+    ----------
+    x : TYPE: Pandas series
+        DESCRIPTION: data to be plotted on the x axis
+    y1 : TYPE: Pandas series
+        First data series to be plotted on the first y axis
+    y2 : TYPE: Pandas series
+        second data series to be plottes on the second y axis
+    x_label : TYPE: String
+        X axis label
+    y1_label : TYPE: String
+        First y axis label
+    y2_label : TYPE: String
+        Second y axis label
+    title : TYPE: String
+        Graph title
+
+    Returns
+    -------
+    Outputs a graph diagram and saves it in the same directory
+
+    """
     fig1,first=plt.subplots(figsize=(10,12))
     first.plot(x,y1,'r-')
     first.set_xlabel(x_label)

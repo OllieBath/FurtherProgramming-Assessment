@@ -112,27 +112,38 @@ class Simulation:
 
         for n in range(self.duration):
             locations = []
+            status=[]
             for person in self.everyone:
                 # array of everyones location for specific point in time
                 locations.append(person.position)
-                # [[x,y],[x.y],[x,y]]
-                
+                # [[x,y],[x.y],[x,y]]  
+                if person.condition=='healthy':
+                    status.append('#00FF00')
+                elif person.condition=='infected':
+                    status.append('#FF0000')
+                elif person.condition=='recovered':
+                    status.append('#0000FF')
+                elif person.condition=='dead':
+                    status.append('#000000')
             # scatter plot of everyones location for specific point in time
             locationsx = []
             locationsy = []
             for n in range(len(locations)):
                 locationsx.append(locations[n][0])
                 locationsy.append(locations[n][1])
-            locationsscatter = [self.axs.scatter(locationsx, locationsy, cmap='viridis')]
+            locationsscatter = [self.axs.scatter(locationsx, locationsy, c=status)]
             
             # add to list of all frames
             self.frames.append(locationsscatter)
-
+            
             # move every person
             for person in self.everyone:
                 person.update_position()
-
+            
+                    
+                  
         simulate = animation.ArtistAnimation(self.fig, self.frames, interval=20)
+        plt.pause(0.05)
         plt.show()        
        
 class world:
@@ -151,6 +162,6 @@ print(x)
 '''
 
 #test
-sim1 = Simulation(100,100)
+sim1 = Simulation(100,10)
 sim1.animate()
 

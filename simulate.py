@@ -21,8 +21,16 @@ class Person():
         self.speed=speed
         self.position=[xposition,yposition]
         self.vaccinated=0        
-        self.condition="healthy"
+        
+        # inital condition
+        chance = np.random.random()
+        if chance < 0.95:
+            self.condition="healthy"
+        else:
+            self.condition="infected"
 
+        # chance of dying, if above 0.99 (1% chance) this person will die if they get covid
+        self.chanceofdeath = np.random.random()
 
     def infect(self):
         self.condition="infected"
@@ -54,10 +62,39 @@ class Person():
     def change_speed(self,speed):
         self.speed=speed
 
+    def chance_to_die(self):
+        if self.condition == "infected":
+            if self.chanceofdeath > 0.95:
+                chance = np.random.random()
+                # chance of death 10%
+                if chance > 0.95:
+                    self.change_speed([0,0])
+                    self.condition = "dead"
+            else:
+                chance = np.random.random()
+                if chance > 0.995:
+                    self.condition = "recovered"
+            
+
+    def chance_to_infect(self, others):
+        status = self.condition
+        range = 0.5
+
+        if status == "healthy":
+            for person in others:
+                if person.position[0] < (self.position[0] + range) and person.position[0] > (self.position[0] - range):
+                    if person.position[1] < (self.position[1] + range) and person.position[1] > (self.position[1] - range):
+                        if person.condition == "infected":
+                            chance = np.random.random()
+                            # chance of infection 30%
+                            if chance > 0.985:
+                                self.condition = "infected"
 
     def update_position(self):
         speed = self.speed
-       # print(speed)
+
+        
+
         
         # if x touching boundaries 
         if self.position[0] + self.speed[0] < 0:
@@ -81,7 +118,11 @@ class Person():
 
         # update position
         self.position = [x, y]
-
+class world:
+    def __init__(self,axis):
+        self.axis=axis
+        self.axis.set_xticks([])
+        self.axis.set_yticks([])
 
 class Simulation:
     
@@ -91,13 +132,23 @@ class Simulation:
         self.day = 0
         self.population = population
 
-        # just template probabilites, will change
-        self.recovery_probability = 0.7
-        self.infection_probability = 0.1
-        self.death_probability = 0.05
-
         self.everyone = []
 
+        self.fig = plt.figure(figsize=(8,4))
+        self.ax1 = self.fig.add_subplot(1,2,1)
+        self.ax2 = self.fig.add_subplot(1,2,2)
+        self.ax1.set_xlim(0,10)
+        self.ax1.set_ylim(0,10)
+        self.ax1.noaxis=world(self.ax1)
+        self.ax2.set_xlim(0,10)
+        self.ax2.set_ylim(0,10)
+        
+        self.framex, self.framey,self.framecolors, self.frameday, self.framehealthy, self.frameinfected, self.framerecovered, self.framedead = self.animate()
+        self.x = []
+        self.yHealthy = []
+        self.yInfected = []
+        self.yRecovered = []
+        self.yDead = []
 
     def animate(self):
         # frames for animation, contains location of people
@@ -105,67 +156,164 @@ class Simulation:
 
         # set up
         self.everyone = [Person() for i in range(self.population)]
+        '''
         self.fig = plt.figure(figsize=(10, 10))
         
         self.left_plot = self.fig.add_subplot(1, 1, 1)
         #self.axes_line = self.figure.add_subplot(1, 2, 2)
         self.left_animation=world(self.left_plot)
-      
+        '''
         
-        
+        framex = []
+        framey = []
+        framecolors = []
+        frameday = []
+        framehealthy = []
+        frameinfected = []
+        framerecovered = []
+        framedead = []
+
+
         for n in range(self.duration):
+            list = []
+            for x in range(n+1):
+                list.append(x) 
+            frameday.append(list)
+
             locations = []
-            status=[]
+            statuses = []
+            healthycount = 0
+            infectedcount = 0
+            recoveredcount = 0
+            deadcount = 0
+
             for person in self.everyone:
                 # array of everyones location for specific point in time
                 locations.append(person.position)
                 # [[x,y],[x.y],[x,y]]  
                 if person.condition=='healthy':
-                    status.append('#00FF00')
+                    statuses.append('#00FF00')
+                    healthycount += 1
                 elif person.condition=='infected':
-                    status.append('#FF0000')
+                    statuses.append('#FF0000')
+                    infectedcount += 1
                 elif person.condition=='recovered':
-                    status.append('#0000FF')
+                    statuses.append('#0000FF')
+                    recoveredcount += 1
                 elif person.condition=='dead':
-                    status.append('#000000')
+                    statuses.append('#000000')
+                    deadcount += 1
                 #set the colour for every state    
+
+            framehealthy.append(healthycount)
+            frameinfected.append(infectedcount)
+            framerecovered.append(recoveredcount)
+            framedead.append(deadcount)
+
             # scatter plot of everyones location for specific point in time
             locationsx = []
             locationsy = []
             for n in range(len(locations)):
                 locationsx.append(locations[n][0])
                 locationsy.append(locations[n][1])
-            locationsscatter = [plt.scatter(locationsx, locationsy, c=status)]
+
+            #locationsscatter = [plt.scatter(locationsx, locationsy, c=statuses)]
+
+
+            framex.append(locationsx)
+            framey.append(locationsy)
+            framecolors.append(statuses)
+
+            
+
             
             # add to list of all frames
-            self.frames.append(locationsscatter)
             
+            
+            # move every person
+            for person in self.everyone:
+                person.chance_to_die()
+            # spread disease
+            for person in self.everyone:
+                person.chance_to_infect(self.everyone)
             # move every person
             for person in self.everyone:
                 person.update_position()
             
-                    
+        return framex, framey, framecolors, frameday, framehealthy, frameinfected, framerecovered, framedead        
                   
-        simulate = animation.ArtistAnimation(self.fig, self.frames, interval=20)
-        plt.pause(0.05)
-        plt.show()        
-       
-class world:
-    def __init__(self,axes):
+    def init(self):
+        #print(self.framecolors[0])
+        #print(self.framex[0])
+        #print(self.frameday)
+        #print(len(self.framex))
+        #print(self.framehealthy[:500+2])
+        #print(self.framehealthy[:1])
+        self.a1 = self.ax1.scatter(self.framex[0],self.framey[0],c=self.framecolors[0])
         
-        #hides the x, y axis of animation      
-        self.axes=axes
-        self.axes.set_xticks([])
-        self.axes.set_yticks([])
+        #a2 = self.ax2.plot([],[])
+        #a2 = self.ax2.scatter(self.framex[0],self.framey[0],c=self.framecolors[0])
+        #self.a2 = self.ax2.scatter(self.framex[0],self.framey[0],c=self.framecolors[0])
+        self.ax2.clear()
+        return self.a1, self.ax2
 
-'''
-test to see whether the world works
-x=Animation()
-print(x)
+    def animatescatter(self,i):
+        #print(i)
+        self.a1 = self.ax1.scatter(self.framex[i], self.framey[i], c=self.framecolors[i])
 
-'''
+        return self.a1
+
+    def animateline(self, i):
+        if i == 0:
+            self.x = []
+            self.yHealthy = []
+            self.yInfected = []
+            self.yRecovered = []
+            self.yDead = []
+        
+        ptHealthy = self.framehealthy[i]
+        ptInfected = self.frameinfected[i]
+        ptRecovered = self.framerecovered[i]
+        ptDead = self.framedead[i]
+
+        self.x.append(i)
+
+        self.yHealthy.append(ptHealthy)
+        self.yInfected.append(ptInfected)
+        self.yRecovered.append(ptRecovered)
+        self.yDead.append(ptDead)
+
+        self.ax2.clear()
+
+        self.ax2.plot(self.x, self.yHealthy, linewidth=2, label='Healthy')
+        self.ax2.plot(self.x, self.yInfected, linewidth=2, label='Infected')
+        self.ax2.plot(self.x, self.yRecovered, linewidth=2, label='recovered')
+        self.ax2.plot(self.x, self.yDead, linewidth=2, label='dead')
+
+        self.ax2.set_xlim([0,self.duration])
+        self.ax2.set_ylim([0,self.population])
+
+        self.ax2.legend(loc="upper right")
+
+        return self.ax2
+
+    def update(self, i):
+        a1 = self.animatescatter(i)
+        a2 = self.animateline(i)
+
+        return a1, a2
+
+    def showanimation(self):
+        
+        anim = animation.FuncAnimation(self.fig, self.update, init_func=self.init,frames=range(self.duration), blit=True, interval=2)
+
+        plt.show()
+
 
 #test
-sim1 = Simulation(100,30)
-sim1.animate()
+
+
+sim1 = Simulation(500,200)
+sim1.animate
+sim1.showanimation()
 

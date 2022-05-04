@@ -117,7 +117,15 @@ class Simulation:
                 # array of everyones location for specific point in time
                 locations.append(person.position)
                 # [[x,y],[x.y],[x,y]]  
-                
+                if person.condition=='healthy':
+                    status.append('#00FF00')
+                elif person.condition=='infected':
+                    status.append('#FF0000')
+                elif person.condition=='recovered':
+                    status.append('#0000FF')
+                elif person.condition=='dead':
+                    status.append('#000000')
+                #set the colour for every state    
             # scatter plot of everyones location for specific point in time
             locationsx = []
             locationsy = []

@@ -57,7 +57,7 @@ class Person():
 
     def update_position(self):
         speed = self.speed
-        print(speed)
+       # print(speed)
         
         # if x touching boundaries 
         if self.position[0] + self.speed[0] < 0:
@@ -106,10 +106,13 @@ class Simulation:
         # set up
         self.everyone = [Person() for i in range(self.population)]
         self.fig = plt.figure(figsize=(10, 10))
-        plt.xlim(0, 10)
-        plt.ylim(0, 10)
-        self.axs = plt.axes()
-
+        
+        self.left_plot = self.fig.add_subplot(1, 1, 1)
+        #self.axes_line = self.figure.add_subplot(1, 2, 2)
+        self.left_animation=world(self.left_plot)
+      
+        
+        
         for n in range(self.duration):
             locations = []
             status=[]
@@ -132,7 +135,7 @@ class Simulation:
             for n in range(len(locations)):
                 locationsx.append(locations[n][0])
                 locationsy.append(locations[n][1])
-            locationsscatter = [self.axs.scatter(locationsx, locationsy, c=status)]
+            locationsscatter = [plt.scatter(locationsx, locationsy, c=status)]
             
             # add to list of all frames
             self.frames.append(locationsscatter)
@@ -163,6 +166,6 @@ print(x)
 '''
 
 #test
-sim1 = Simulation(100,10)
+sim1 = Simulation(100,30)
 sim1.animate()
 

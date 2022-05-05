@@ -1,4 +1,5 @@
 import argparse
+from turtle import color
 import numpy as np
 from matplotlib import pyplot as plt, animation
 import random
@@ -282,10 +283,10 @@ class Simulation:
 
         self.ax2.clear()
 
-        self.ax2.plot(self.x, self.yHealthy, linewidth=2, label='Healthy')
-        self.ax2.plot(self.x, self.yInfected, linewidth=2, label='Infected')
-        self.ax2.plot(self.x, self.yRecovered, linewidth=2, label='recovered')
-        self.ax2.plot(self.x, self.yDead, linewidth=2, label='dead')
+        self.ax2.plot(self.x, self.yHealthy, linewidth=2, label='Healthy', color='#00FF00')
+        self.ax2.plot(self.x, self.yInfected, linewidth=2, label='Infected', color='#FF0000')
+        self.ax2.plot(self.x, self.yRecovered, linewidth=2, label='recovered', color='#0000FF')
+        self.ax2.plot(self.x, self.yDead, linewidth=2, label='dead', color='#000000')
 
         self.ax2.set_xlim([0, self.duration])
         self.ax2.set_ylim([0, self.population])
@@ -310,7 +311,7 @@ class Simulation:
 
     def savefinalframe(self):
         # this function saves the final frame of animation to Final.png
-        self.figfile = plt.figure(figsize=(8, 4))
+        self.figfile = plt.figure(figsize=(4, 2))
         self.ax1file = self.figfile.add_subplot(1, 2, 1)
         self.ax2file = self.figfile.add_subplot(1, 2, 2)
         self.ax1file.set_xlim(0, 10)

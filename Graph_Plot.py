@@ -40,6 +40,7 @@ fst.set_xlabel("Days")
 plt.style.use("seaborn")
 sec=fst.twinx()
 sec.set_ylabel("Number of death cases")
+sec.set_title("Corona virus Data Representation", fontsize=20,loc=("center"),color="Purple",fontstyle="oblique")
 # sec.set_ylim(0, 160000)
 
 red_patch = mpatches.Patch(color='red', label="Cumulative infected cases")

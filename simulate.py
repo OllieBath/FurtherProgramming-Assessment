@@ -212,10 +212,10 @@ class Simulation:
                     statuses.append('#000000')
                     deadcount += 1
                     
-                elif person.condition=='vaccinated':
-                    statuses.append('#FFFF00')
+                #elif person.condition=='vaccinated':
+                #    statuses.append('#FFFF00')
                     
-                    vaccinatedcount += 1
+                #    vaccinatedcount += 1
                 #set the colour for every state    
 
             framehealthy.append(healthycount)
@@ -242,8 +242,8 @@ class Simulation:
             
             # add to list of all frames
             
-            for person in self.everyone:
-                person.getvaccinated()
+            #for person in self.everyone:
+            #    person.getvaccinated()
             # move every person
             for person in self.everyone:
                 person.chance_to_die()

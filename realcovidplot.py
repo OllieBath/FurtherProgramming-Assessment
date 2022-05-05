@@ -7,7 +7,7 @@ Created on Tue Apr 12 19:06:55 2022
 """
 
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FuncAnimation ,PillowWriter
 # from itertools import count
 import pandas as pd
 import matplotlib.patches as mpatches
@@ -61,6 +61,6 @@ def animate(i):
 
 
 ani = FuncAnimation(fig=fig, func=animate,frames=900, interval=0.0001,repeat=False)
-# ani.save("vid.mp4")    
+# ani.save("movie.gif", writer=PillowWriter(fps=30))  
 
 

@@ -59,6 +59,6 @@ def animate(i):
     sec.plot(x,y2, scaley=True, scalex=True, color="red")
     fst.plot(x,y3, scaley=True, scalex=True, color="green") 
 
-ani = FuncAnimation(fig=fig, func=animate,frames=800, interval=0.0001, repeat=True)
+ani = FuncAnimation(fig=fig, func=animate,frames=800, interval=0.0001)
 ani.save("vid.mp4")    
 

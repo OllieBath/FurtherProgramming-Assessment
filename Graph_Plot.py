@@ -6,15 +6,13 @@ Created on Tue Apr 12 19:06:55 2022
 @author: kareemelsabbagh
 """
 
-import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
+from matplotlib.animation import FuncAnimation
+# from itertools import count
+import pandas as pd
 import matplotlib.patches as mpatches
-
 table=pd.read_csv('./corona_records.csv',sep=',')
 tf=pd.DataFrame(table)
-# print(tf)
-
 slices={"Day":pd.Series(data=range(1,782),index=range(1,782)),
         "New Cases":pd.Series(data=tf["newCasesBySpecimenDate"],index=range(1,782)),
         "Cumulative Cases":pd.Series(data=tf["cumCasesBySpecimenDate"],index=(range(1,782))),
@@ -22,59 +20,44 @@ slices={"Day":pd.Series(data=range(1,782),index=range(1,782)),
         "New deaths":pd.Series(data=tf["newDeaths"],index=range(1,782)),
         "vaccinated":pd.Series(data=tf["Vac"],index=range(1,782))}
 slicef=pd.DataFrame(slices)
-# print(slicef.head())
 
-days=slicef["Day"]
-newcases=slicef["New Cases"]
-cumcases=slicef["Cumulative Cases"]
-cumDeaths=slicef["Cum Deaths"]
-newdeaths=slicef["New deaths"]
-vaccinated=slicef["vaccinated"]
+x_days=list (slicef["Day"])
+y1_newcases=list (slicef["New Cases"])
+y2_cumcases=list(slicef["Cumulative Cases"])
+y3_cumdeaths=list(slicef["Cum Deaths"])
+y4_newdeaths=list(slicef["New deaths"])
+y5_vaccinated=list(slicef["vaccinated"])
 
-def dplot(x,y1,y2,x_label,y1_label,y2_label,title):
-    """
-    Function that creates plots of 2 line graphs sharing same x axis but different y axis due to different ranges of values 
 
-    Parameters
-    ----------
-    x : TYPE: Pandas series
-        DESCRIPTION: data to be plotted on the x axis
-    y1 : TYPE: Pandas series
-        First data series to be plotted on the first y axis
-    y2 : TYPE: Pandas series
-        second data series to be plottes on the second y axis
-    x_label : TYPE: String
-        X axis label
-    y1_label : TYPE: String
-        First y axis label
-    y2_label : TYPE: String
-        Second y axis label
-    title : TYPE: String
-        Graph title
+x,y1,y2,y3 = [], [],[],[]
 
-    Returns
-    -------
-    Outputs a graph diagram and saves it in the same directory
+fig = plt.figure(figsize=(5,2))
+fst = fig.add_subplot(1,1,1)
+# fst.set_ylim(0, 8*10**7,10**6)
+fst.set_xlim(0, 800)
+fst.set_ylabel("Number of infected and vaccinated cases",fontsize=12)
+fst.set_xlabel("Days")
+plt.style.use("seaborn")
+sec=fst.twinx()
+sec.set_ylabel("Number of death cases")
+# sec.set_ylim(0, 160000)
 
-    """
-    fig1,first=plt.subplots(figsize=(10,12))
-    first.plot(x,y1,'r-')
-    first.set_xlabel(x_label)
-    # ax1.xticks(np.arange(10,800),50)
-    first.set_ylabel(y1_label,fontsize=12)
-    first.set_xlim(0,800)
-    sec=first.twinx()
-    sec.plot(x,y2,'-b',)
-    sec.set_yscale("linear")
-    sec.set_ylabel(y2_label,fontsize=12)
-    
-    sec.set_title(title)
-    red_patch = mpatches.Patch(color='red', label=y1_label)
-    blue_patch = mpatches.Patch(color='blue', label=y2_label)
-    plt.legend(handles=[red_patch]+[blue_patch],loc=("upper left"))
-    plt.savefig(title)
+red_patch = mpatches.Patch(color='red', label="Cumulative infected cases")
+blue_patch = mpatches.Patch(color='blue', label="Cumulative death cases")
+green_patch = mpatches.Patch(color='green', label="Vaccinated")
+plt.legend(handles=[red_patch]+[blue_patch]+[green_patch],loc=("upper left"))
 
 
 
+def animate(i):
+    x.append(x_days[i])
+    y1.append((y2_cumcases[i]))
+    y2.append((y3_cumdeaths[i]))
+    y3.append((y5_vaccinated[i]))
+    fst.plot(x,y1, scaley=True, scalex=True, color="blue")
+    sec.plot(x,y2, scaley=True, scalex=True, color="red")
+    fst.plot(x,y3, scaley=True, scalex=True, color="green") 
 
+ani = FuncAnimation(fig=fig, func=animate,frames=800, interval=0.0001, repeat=True)
+ani.save("vid.mp4")    
 

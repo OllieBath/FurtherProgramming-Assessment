@@ -298,6 +298,7 @@ class Simulation:
         a1 = self.animatescatter(i)
         a2 = self.animateline(i)
 
+
         return a1, a2
 
     def showanimation(self):
@@ -307,6 +308,33 @@ class Simulation:
 
         plt.show()
 
+    def savefinalframe(self):
+        # this function saves the final frame of animation to Final.png
+        self.figfile = plt.figure(figsize=(8, 4))
+        self.ax1file = self.figfile.add_subplot(1, 2, 1)
+        self.ax2file = self.figfile.add_subplot(1, 2, 2)
+        self.ax1file.set_xlim(0, 10)
+        self.ax1file.set_ylim(0, 10)
+        self.ax1file.noaxis = world(self.ax1)
+        self.ax2file.set_xlim(0, 10)
+        self.ax2file.set_ylim(0, 10)
+
+        self.scatterphoto = self.ax1file.scatter(
+            self.framex[self.duration-1], self.framey[self.duration-1], c=self.framecolors[self.duration-1])
+
+        timex = list(range(1,self.duration+1))
+
+        self.ax2file.plot(timex, self.framehealthy, linewidth=2, label='Healthy')
+        self.ax2file.plot(timex, self.frameinfected, linewidth=2, label='Infected')
+        self.ax2file.plot(timex, self.framerecovered, linewidth=2, label='recovered')
+        self.ax2file.plot(timex, self.framedead, linewidth=2, label='dead')
+        self.ax2file.set_xlim([0, self.duration])
+        self.ax2file.set_ylim([0, self.population])
+        self.ax2file.legend(loc="upper right")
+        self.figfile.savefig('./Final.png')
+        
+
+        
 
 # main loop with command line arguments
 def main(*args):
@@ -318,9 +346,12 @@ def main(*args):
     parser.add_argument('--population', metavar='N', type=int, default=200,
                         help='Amount of people to simulate, default is 200 (doesnt work very well with any less).')
     args = parser.parse_args(args)
+    
     sim = Simulation(args.duration, args.population)
     sim.animate
+    sim.savefinalframe()
     sim.showanimation()
+
 
 if __name__ == "__main__":
     import sys

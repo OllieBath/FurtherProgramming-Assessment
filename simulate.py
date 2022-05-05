@@ -20,10 +20,10 @@ class Person():
         self.radius=1
         self.speed=speed
         self.position=[xposition,yposition]
-        self.vaccinated=0        
-        
+               
         # inital condition
         chance = np.random.random()
+        
         if chance < 0.95:
             self.condition="healthy"
         else:
@@ -32,12 +32,13 @@ class Person():
         # chance of dying, if above 0.99 (1% chance) this person will die if they get covid
         self.chanceofdeath = np.random.random()
     #setting all possible conditions    
+        
     def infect(self):
         self.condition="infected"
 
 
     def vaccinate(self):
-        self.vaccinated=1
+        self.vaccinated="vaccinated"
 
 
     def kill(self):
@@ -74,8 +75,16 @@ class Person():
                 chance = np.random.random()
                 if chance > 0.995:
                     self.condition = "recovered"
-            
-
+    
+    def getvaccinated(self):
+       
+        if self.condition=="healthy":
+           chance=np.random.random()
+           if chance >0.5:
+               self.condition== "vaccinated"
+           else:
+               self.condition== "healthy"
+               
     def chance_to_infect(self, others):
         status = self.condition
         range = 0.5
@@ -150,14 +159,15 @@ class Simulation:
         self.yInfected = []
         self.yRecovered = []
         self.yDead = []
-
+        
+    
     def animate(self):
         # frames for animation, contains location of people
         self.frames = []
 
         # set up
         self.everyone = [Person() for i in range(self.population)]
-    
+        
         
         framex = []
         framey = []
@@ -167,7 +177,7 @@ class Simulation:
         frameinfected = []
         framerecovered = []
         framedead = []
-
+        
 
         for n in range(self.duration):
             list = []
@@ -181,7 +191,8 @@ class Simulation:
             infectedcount = 0
             recoveredcount = 0
             deadcount = 0
-
+            vaccinatedcount=0
+            
             for person in self.everyone:
                 # array of everyones location for specific point in time
                 locations.append(person.position)
@@ -189,15 +200,22 @@ class Simulation:
                 if person.condition=='healthy':
                     statuses.append('#00FF00')
                     healthycount += 1
+                    
                 elif person.condition=='infected':
                     statuses.append('#FF0000')
                     infectedcount += 1
                 elif person.condition=='recovered':
                     statuses.append('#0000FF')
+                    
                     recoveredcount += 1
                 elif person.condition=='dead':
                     statuses.append('#000000')
                     deadcount += 1
+                    
+                elif person.condition=='vaccinated':
+                    statuses.append('#FFFF00')
+                    
+                    vaccinatedcount += 1
                 #set the colour for every state    
 
             framehealthy.append(healthycount)
@@ -224,7 +242,8 @@ class Simulation:
             
             # add to list of all frames
             
-            
+            for person in self.everyone:
+                person.getvaccinated()
             # move every person
             for person in self.everyone:
                 person.chance_to_die()

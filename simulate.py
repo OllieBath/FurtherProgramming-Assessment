@@ -31,7 +31,7 @@ class Person():
 
         # chance of dying, if above 0.99 (1% chance) this person will die if they get covid
         self.chanceofdeath = np.random.random()
-
+    #setting all possible conditions    
     def infect(self):
         self.condition="infected"
 
@@ -61,7 +61,7 @@ class Person():
 
     def change_speed(self,speed):
         self.speed=speed
-
+    #set the possibilities of infected/recovered/dead    
     def chance_to_die(self):
         if self.condition == "infected":
             if self.chanceofdeath > 0.95:
@@ -118,6 +118,7 @@ class Person():
 
         # update position
         self.position = [x, y]
+#delect the axis of the left simulation        
 class world:
     def __init__(self,axis):
         self.axis=axis
@@ -156,13 +157,7 @@ class Simulation:
 
         # set up
         self.everyone = [Person() for i in range(self.population)]
-        '''
-        self.fig = plt.figure(figsize=(10, 10))
-        
-        self.left_plot = self.fig.add_subplot(1, 1, 1)
-        #self.axes_line = self.figure.add_subplot(1, 2, 2)
-        self.left_animation=world(self.left_plot)
-        '''
+    
         
         framex = []
         framey = []

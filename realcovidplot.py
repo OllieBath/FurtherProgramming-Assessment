@@ -61,6 +61,7 @@ def animate(i):
 
 
 ani = FuncAnimation(fig=fig, func=animate,frames=900, interval=0.0001,repeat=False)
+plt.show()
 # ani.save("movie.gif", writer=PillowWriter(fps=30))  
 
 
